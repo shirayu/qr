@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>QR Generator</title>
+
+    <!-- OGP -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="QR Generator" />
+    <meta name="twitter:title" content="QR Generator" />
+    <meta name="twitter:description" content="Generate QR codes" />
+    <!-- OGP -->
+
+    <style type="text/css">
+        .qrdot {
+            display: inline-block;
+        }
+
+        .qrline {
+            white-space: nowrap;
+            line-height: 0em;
+        }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+
+    <div id="app">
+        <div>
+            <textarea id="query" style="width:90%; height:5em; font-size:1.5em;"></textarea>
+        </div>
+
+        <div style="padding-top:1em;" id="qrcode-canvas">
+        </div>
+    </div>
+
+
+
+    <script src="qrcodegen.js"></script>
+    <script>
+        const QRC = qrcodegen.QrCode;
+
+        function displayQR(query) {
+            const canvas = document.getElementById('qrcode-canvas');
+            canvas.innerHTML = '';
+
+            const qr0 = QRC.encodeText(query, QRC.Ecc.HIGH);
+            const size_area = Math.min(window.innerHeight, window.innerWidth);
+            const size = Math.min(10, Math.floor(size_area / qr0.size));
+            console.log(size_area, size);
+
+            for (let y = 0; y < qr0.size; y++) {
+                const d = document.createElement("div")
+                d.className = 'qrline';
+                for (let x = 0; x < qr0.size; x++) {
+                    const s = document.createElement("span")
+                    s.style.width = size + 'px';
+                    s.style.height = size + 'px';
+                    s.className = 'qrdot';
+                    const v = qr0.getModule(x, y);
+                    if (v) {
+                        s.style.background = 'black';
+                    };
+                    d.append(s);
+                }
+                canvas.append(d);
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const q = document.getElementById('query');
+            displayQR(q.value);
+
+            q.addEventListener('keyup', function(e) {
+                try {
+                    displayQR(q.value);
+                } catch (error) {
+                    const canvas = document.getElementById('qrcode-canvas');
+                    canvas.innerHTML = error;
+                }
+            })
+        });
+    </script>
+
+</body>
+
+</html>
