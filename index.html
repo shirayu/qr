@@ -79,7 +79,7 @@
             const q = document.getElementById('query');
             displayQR(q.value);
 
-            q.addEventListener('keyup', function(e) {
+            q.addEventListener('input', function(e) {
                 try {
                     displayQR(q.value);
                 } catch (error) {
