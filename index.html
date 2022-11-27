@@ -34,13 +34,18 @@
             <textarea id="query" style="width:90%; height:5em; font-size:1.5em;"></textarea>
         </div>
 
-        <div style="padding-top:1em;" id="qrcode-canvas">
+        <div style="padding:1em 1em 1em 1em;" id="qrcode-canvas">
+        </div>
+
+        <div>
+            <input id="download-btn" type="button" value="Download">
         </div>
     </div>
 
 
 
     <script src="qrcodegen.js"></script>
+    <script src="html2canvas.min.js"></script>
     <script>
         const QRC = qrcodegen.QrCode;
 
@@ -51,7 +56,7 @@
             const qr0 = QRC.encodeText(query, QRC.Ecc.HIGH);
             const size_area = Math.min(window.innerHeight, window.innerWidth);
             const size = Math.min(10, Math.floor(size_area / qr0.size));
-            console.log(size_area, size);
+            canvas.style.width = `${size * qr0.size + 5}px`;
 
             for (let y = 0; y < qr0.size; y++) {
                 const d = document.createElement("div")
@@ -83,6 +88,21 @@
                 }
             })
         });
+
+        function escape_filename(n) {
+            return n.replace(/[<>:"\/\\|?*]+/g, '=');
+        };
+
+        document.getElementById("download-btn").addEventListener("click", () => {
+            const q = document.getElementById('query');
+            html2canvas(document.querySelector("#qrcode-canvas")).then(canvas => {
+                const dele = document.createElement("a");
+                dele.href = canvas.toDataURL("image/png");
+                const filename = escape_filename(q.value);
+                dele.download = `QR_${filename}.png`;
+                dele.click();
+            });
+        })
     </script>
 
 </body>
