@@ -48,6 +48,8 @@
         <div>
             <input id="download-btn" type="button" value="Download">
         </div>
+        <div id="message">
+        </div>
     </div>
 
 
@@ -56,6 +58,7 @@
     <script src="html2canvas.min.js"></script>
     <script>
         const QRC = qrcodegen.QrCode;
+        const segmenter = new Intl.Segmenter("ja", {granularity: "grapheme"});
 
         function displayQR(query) {
             const canvas = document.getElementById('qrcode-canvas');
@@ -94,6 +97,8 @@
                     const canvas = document.getElementById('qrcode-canvas');
                     canvas.innerHTML = error;
                 }
+                const len = [...segmenter.segment(q.value)].length;
+                document.getElementById("message").innerHTML = `${len} characters`;
             })
         });
 
